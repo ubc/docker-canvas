@@ -1,0 +1,10 @@
+
+default: &default
+  servers:
+    - <%= ENV['REDIS_SERVER'] %>
+
+development:
+  <<: *default
+
+production:
+  <<: *default

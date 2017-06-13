@@ -1,0 +1,8 @@
+default: &default
+  domain: localhost
+
+development:
+  <<: *default
+
+production:
+  <<: *default

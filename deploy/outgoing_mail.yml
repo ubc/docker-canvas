@@ -1,0 +1,15 @@
+default: &default
+  address: <%= ENV['MAIL_SERVER'] %>
+  port: <%= ENV['MAIL_PORT'] %>
+  user_name: <%= ENV['MAIL_USERNAME'] %>
+  password: <%= ENV['MAIL_PASSWORD'] %>
+  authentication: "plain" # plain, login, or cram_md5
+  domain: <%= ENV['MAIL_DOMAIN'] %>
+  outgoing_address: <%= ENV['MAIL_DEFAULT_SENDER_ADDRESS'] %>
+  default_name: <%= ENV['MAIL_DEFAULT_SENDER_NAME'] %>
+
+development:
+  <<: *default
+
+production:
+  <<: *default

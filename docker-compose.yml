@@ -1,0 +1,57 @@
+version: '2'
+services:
+  db:
+    image: postgres:9.3
+    environment:
+      - POSTGRES_USER=canvas
+      - POSTGRES_PASSWORD=canvas
+      - POSTGRES_DB=canvas
+    volumes:
+      - ./.data/postgres:/var/lib/postgresql/data
+  redis:
+    image: redis:3.2.4
+    command: redis-server --appendonly yes
+    volumes:
+      - ./.data/redis:/data
+  mail:
+    image: mailhog/mailhog:v1.0.0
+    ports:
+      - "8901:8025"
+  app: &app
+    image: instructure/canvas-lms:stable
+    environment:
+      - DB_DRIVER=postgresql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USERNAME=canvas
+      - DB_PASSWORD=canvas
+      - DB_NAME=canvas
+      - RAILS_ENV=production
+      - REDIS_SERVER=redis://redis:6379
+      - MAIL_SERVER=mail
+      - MAIL_PORT=1025
+      - MAIL_USERNAME=canvas
+      - MAIL_PASSWORD=canvas
+      - MAIL_DOMAIN=example.com
+      - MAIL_DEFAULT_SENDER_ADDRESS=canvas@example.com
+      - MAIL_DEFAULT_SENDER_NAME=Canvas Admin
+    volumes:
+      - ./deploy/database.yml:/usr/src/app/config/database.yml:ro
+      - ./deploy/redis.yml:/usr/src/app/config/redis.yml:ro
+      - ./deploy/cache.yml:/usr/src/app/config/cache.yml:ro
+      - ./deploy/outgoing_mail.yml:/usr/src/app/config/outgoing_mail.yml:ro
+      - ./deploy/security.yml:/usr/src/app/config/security.yml:ro
+      - ./deploy/delayed_jobs.yml:/usr/src/app/config/delayed_jobs.yml:ro
+      - ./deploy/domain.yml:/usr/src/app/config/domain.yml:ro
+      - ./deploy/development-local.rb:/usr/src/app/config/environments/development-local.rb:ro
+    ports:
+      - "8900:80"
+    depends_on:
+      - db
+      - redis
+      - mail
+  worker:
+    <<: *app
+    command: bundle exec script/delayed_job run
+    ports:
+      - "8902:80"
