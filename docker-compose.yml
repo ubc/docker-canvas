@@ -20,6 +20,7 @@ services:
   app: &app
     image: instructure/canvas-lms:stable
     environment:
+      - VIRTUAL_HOST=canvas.docker
       - DB_DRIVER=postgresql
       - DB_HOST=db
       - DB_PORT=5432

@@ -1,0 +1,11 @@
+version: '2'
+services:
+  app:
+    external_links:
+      - dockercanvas_app_1:canvas.docker
+    networks:
+      - default
+      - dockercanvas_default
+networks:
+  dockercanvas_default:
+    external: true

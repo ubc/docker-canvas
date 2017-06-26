@@ -7,6 +7,7 @@ Docker provisioning for Canvas integration tests (via LTI, etc)
 
 * [Docker Engine](https://docs.docker.com/engine/installation/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
+* [Dory](https://github.com/FreedomBen/dory)
 
 ### Clone Repo and Start Server
 
@@ -61,3 +62,15 @@ MailHog (catches all out going mail from canvas) is accessible at
 
     docker-compose down
     rm -rf .data
+
+
+### Enable Virtual hosts
+
+It may be hard to link to the Canvas container in some situations using only localhost. This can be mitigated using virtual hosts. One way to easy use add them is by using [Dory](https://github.com/FreedomBen/dory).
+
+    gem install dory
+    dory up
+
+Now you can access the canvas via `canvas.docker`. Adding a `docker-compose.override.yml` file to other projects can also improve communication between docker contains. See [docker-compose.example.override.yml](docker-compose.example.override.yml) for an example of how this can be done. You then override compose settings by calling the following:
+
+    docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
