@@ -8,6 +8,8 @@ services:
       - POSTGRES_DB=canvas
     volumes:
       - ./.data/postgres:/var/lib/postgresql/data
+    ports:
+      - "15432:5432"
   redis:
     image: redis:3.2.4
     command: redis-server --appendonly yes
