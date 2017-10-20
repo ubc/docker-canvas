@@ -39,6 +39,7 @@ services:
       - MAIL_DEFAULT_SENDER_ADDRESS=canvas@example.com
       - MAIL_DEFAULT_SENDER_NAME=Canvas Admin
     volumes:
+      - ./.data/public/dist/brandable_css:/usr/src/app/public/dist/brandable_css
       - ./deploy/database.yml:/usr/src/app/config/database.yml:ro
       - ./deploy/redis.yml:/usr/src/app/config/redis.yml:ro
       - ./deploy/cache.yml:/usr/src/app/config/cache.yml:ro
