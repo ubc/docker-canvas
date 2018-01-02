@@ -21,6 +21,7 @@ services:
       - "8901:8025"
   app: &app
     image: instructure/canvas-lms:stable
+    build: .
     environment:
       - VIRTUAL_HOST=canvas.docker
       - DB_DRIVER=postgresql
@@ -48,6 +49,8 @@ services:
       - ./deploy/delayed_jobs.yml:/usr/src/app/config/delayed_jobs.yml:ro
       - ./deploy/domain.yml:/usr/src/app/config/domain.yml:ro
       - ./deploy/development-local.rb:/usr/src/app/config/environments/development-local.rb:ro
+      - /usr/src/app/tmp
+      - common-tmp:/usr/src/app/tmp
     ports:
       - "8900:80"
     depends_on:
@@ -59,3 +62,5 @@ services:
     command: bundle exec script/delayed_job run
     ports:
       - "8902:80"
+volumes:
+  common-tmp:
