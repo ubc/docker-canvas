@@ -66,6 +66,12 @@ MailHog (catches all out going mail from canvas) is accessible at
     docker-compose down
     rm -rf .data
 
+### Rebuild local image
+
+You can try rebuilding the image if you are experiencing issues importing course content, etc. Before running this command, stop the server (if it's running) using `docker-compose down`
+
+    docker-compose build
+
 ### Enable Virtual Hosts
 
  It may be hard to link to the Canvas container in some situations using only localhost. This can be mitigated using the IP address of your host machine to access the canvas instance or by using virtual hosts if that is not feasible. One way of setting up virtual hosts in docker is by using [Dory](https://github.com/FreedomBen/dory).
