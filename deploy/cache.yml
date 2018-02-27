@@ -3,3 +3,6 @@ development:
 
 production:
   cache_store: redis_store
+
+test:
+  cache_store: redis_store

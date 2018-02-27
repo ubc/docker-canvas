@@ -6,3 +6,6 @@ development:
 
 production:
   <<: *default
+
+test:
+  <<: *default
