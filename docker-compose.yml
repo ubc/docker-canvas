@@ -20,7 +20,7 @@ services:
     ports:
       - "8901:8025"
   app: &app
-    image: instructure/canvas-lms:stable
+    image: docker-canvas
     build: .
     environment:
       - VIRTUAL_HOST=canvas.docker
