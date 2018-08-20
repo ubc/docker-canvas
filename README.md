@@ -7,6 +7,7 @@ Docker provisioning for Canvas integration tests (via LTI, etc)
 
 * [Docker Engine](https://docs.docker.com/engine/installation/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
+* Large amount (~4GB) of memory allocated to your docker machine (Canvas uses a lot of memory)
 
 ### Clone Repo and Start Server
 
@@ -24,13 +25,15 @@ Wait a few moments for the database to start then (command might fail if databas
 
 The branding assets must also be manually generated when canvas is in production mode:
 
-    docker-compose run --rm app bundle exec rake brand_configs:generate_and_upload_all
+    docker-compose run --rm app bundle exec rake \
+        canvas:compile_assets_dev \
+        brand_configs:generate_and_upload_all
 
 When prompted enter default account email, password, and display name. Also choose to share usage data or not.
 
-Finally startup all the services:
+Finally startup all the services (the build will create a docker image for you):
 
-    docker-compose up -d
+    docker-compose up -d --build
 
 Canvas is accessible at
 
@@ -72,11 +75,8 @@ You can try rebuilding the image if you are experiencing issues importing course
 
     docker-compose build
 
-### Enable Virtual Hosts
+### Communicating between projects
 
- It may be hard to link to the Canvas container in some situations using only localhost. This can be mitigated using the IP address of your host machine to access the canvas instance or by using virtual hosts if that is not feasible. One way of setting up virtual hosts in docker is by using [Dory](https://github.com/FreedomBen/dory).
+ It may be hard to link to the Canvas container in some situations using only `localhost`. This can be mitigated using the IP address of your host machine to access the canvas instance or by using virtual hosts if that is not feasible.
 
-    gem install dory
-    dory up
-
-Now you can access the canvas via `canvas.docker`. Adding a `docker-compose.override.yml` file to other projects can also improve communication between docker contains. See [docker-compose.example.override.yml](docker-compose.example.override.yml) for an example of how this can be done. Docker compose will automatically use `docker-compose.override.yml` is present when starting your containers.
+ Better instructions on getting this working will be add in the future (sorry!).

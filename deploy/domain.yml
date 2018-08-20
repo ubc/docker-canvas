@@ -1,5 +1,5 @@
 default: &default
-  domain: canvas.docker
+  domain: localhost:8900
 
 development:
   <<: *default
