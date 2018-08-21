@@ -22,6 +22,7 @@ services:
   app: &app
     image: docker-canvas
     build: .
+    command: bash -c "./wait-for-it.sh -t 40 db:5432 && /usr/src/entrypoint"
     environment:
       - DB_DRIVER=postgresql
       - DB_HOST=db
@@ -48,8 +49,8 @@ services:
       - ./deploy/delayed_jobs.yml:/usr/src/app/config/delayed_jobs.yml:ro
       - ./deploy/domain.yml:/usr/src/app/config/domain.yml:ro
       - ./deploy/development-local.rb:/usr/src/app/config/environments/development-local.rb:ro
-      - /usr/src/app/tmp
-      - common-tmp:/usr/src/app/tmp
+      - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh:ro
+      - ./.data/tmp:/usr/src/app/tmp
     ports:
       - "8900:80"
     depends_on:
@@ -61,5 +62,3 @@ services:
     command: bundle exec script/delayed_job run
     ports:
       - "8902:80"
-volumes:
-  common-tmp:
