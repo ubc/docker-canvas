@@ -1,7 +1,7 @@
 version: '2'
 services:
   db:
-    image: postgres:9.3
+    image: postgres:9.6
     environment:
       - POSTGRES_USER=canvas
       - POSTGRES_PASSWORD=canvas
@@ -10,6 +10,20 @@ services:
       - ./.data/postgres:/var/lib/postgresql/data
     ports:
       - "15432:5432"
+    # # use https://github.com/tianon/docker-postgres-upgrade for upgrading postgres as needed
+    # image: tianon/postgres-upgrade:9.3-to-9.6
+    # environment:
+    #   - POSTGRES_USER=canvas
+    #   - POSTGRES_PASSWORD=canvas
+    #   - POSTGRES_DB=canvas
+    # volumes:
+    #   - ./.data/postgres:/var/lib/postgresql/data
+    #   # copy data from .data/postgres into here before running image
+    #   - ./.data/postgres-9.3:/var/lib/postgresql/9.3/data
+    #   # copy data from here into .data/postgres after running image
+    #   - ./.data/postgres-9.6:/var/lib/postgresql/9.6/data
+    # ports:
+    #   - "15432:5432"
   redis:
     image: redis:3.2.4
     command: redis-server --appendonly yes
