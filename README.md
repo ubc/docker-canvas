@@ -51,15 +51,15 @@ MailHog (catches all out going mail from canvas) is accessible at
 ### Check Logs
 
     # app
-    docker logs -f dockercanvas_app_1
+    docker logs -f docker-canvas_app_1
     # worker
-    docker logs -f dockercanvas_worker_1
+    docker logs -f docker-canvas_worker_1
     # db
-    docker logs -f dockercanvas_db_1
+    docker logs -f docker-canvas_db_1
     # redis
-    docker logs -f dockercanvas_redis_1
+    docker logs -f docker-canvas_redis_1
     # mail
-    docker logs -f dockercanvas_mail_1
+    docker logs -f docker-canvas_mail_1
 
 ### Stop Server
 
