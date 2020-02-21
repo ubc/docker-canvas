@@ -52,6 +52,8 @@ MailHog (catches all out going mail from canvas) is accessible at
 
     # app
     docker logs -f docker-canvas_app_1
+    # more detailed app logs
+    docker exec -it docker-canvas_app_1 tail -f log/production.log
     # worker
     docker logs -f docker-canvas_worker_1
     # db
@@ -78,6 +80,10 @@ You can try rebuilding the image if you are experiencing issues importing course
 
 ### Communicating between projects
 
- It may be hard to link to the Canvas container in some situations using only `localhost`. This can be mitigated using the IP address of your host machine to access the canvas instance or by using virtual hosts if that is not feasible.
+It may be hard to link to the Canvas container in some situations using only `localhost`. This can be mitigated using the IP address of your host machine to access the canvas instance or by using virtual hosts if that is not feasible.
 
- Better instructions on getting this working will be add in the future (sorry!).
+Better instructions on getting this working will be add in the future (sorry!).
+
+#### LTI services (membership, grades, etc)
+
+For LTI you need to use your machine's IP address (Change the `DOMAIN` environment variable to your IP address).

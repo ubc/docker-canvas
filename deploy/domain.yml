@@ -1,5 +1,5 @@
 default: &default
-  domain: localhost:8900
+  domain: <%= ENV['DOMAIN'] %>:8900
 
 development:
   <<: *default

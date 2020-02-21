@@ -53,17 +53,23 @@ services:
       - MAIL_DOMAIN=example.com
       - MAIL_DEFAULT_SENDER_ADDRESS=canvas@example.com
       - MAIL_DEFAULT_SENDER_NAME=Canvas Admin
+      - DOMAIN=localhost
     volumes:
       - ./.data/public/dist/brandable_css:/usr/src/app/public/dist/brandable_css
       - ./deploy/database.yml:/usr/src/app/config/database.yml:ro
       - ./deploy/redis.yml:/usr/src/app/config/redis.yml:ro
-      - ./deploy/cache.yml:/usr/src/app/config/cache.yml:ro
+      - ./deploy/cache_store.yml:/usr/src/app/config/cache_store.yml:ro
       - ./deploy/outgoing_mail.yml:/usr/src/app/config/outgoing_mail.yml:ro
       - ./deploy/security.yml:/usr/src/app/config/security.yml:ro
       - ./deploy/delayed_jobs.yml:/usr/src/app/config/delayed_jobs.yml:ro
       - ./deploy/domain.yml:/usr/src/app/config/domain.yml:ro
+      - ./deploy/consul.yml:/usr/src/app/config/consul.yml:ro
+      - ./deploy/dynamic_settings.yml:/usr/src/app/config/dynamic_settings.yml:ro
+      - ./deploy/selenium.yml:/usr/src/app/config/selenium.yml:ro
+      - ./deploy/vault.yml:/usr/src/app/config/vault.yml:ro
       - ./deploy/development-local.rb:/usr/src/app/config/environments/development-local.rb:ro
       - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh:ro
+      - ./override/oauth2_provider_controller.rb:/usr/src/app/app/controllers/oauth2_provider_controller.rb
       - ./.data/tmp:/usr/src/app/tmp
     ports:
       - "8900:80"
