@@ -78,6 +78,10 @@ You can try rebuilding the image if you are experiencing issues importing course
 
     docker-compose build
 
+### Update the DB
+
+    docker-compose run --rm app bundle exec rake db:migrate
+
 ### Communicating between projects
 
 It may be hard to link to the Canvas container in some situations using only `localhost`. This can be mitigated using the IP address of your host machine to access the canvas instance or by using virtual hosts if that is not feasible.
