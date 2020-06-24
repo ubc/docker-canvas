@@ -82,6 +82,18 @@ You can try rebuilding the image if you are experiencing issues importing course
 
     docker-compose run --rm app bundle exec rake db:migrate
 
+### Update Canvas
+
+The official Canvas docker image might not be up-to-date with the version available on github. If you need an updated image, you will have to build it yourself. Check out Canvas from Instructure's github (make sure you're on the branch you need, e.g.: stable) and run:
+
+    docker build -t instructure/canvas-lms:stable .
+
+Note that Instructure recommends at least 8 GB of RAM to build this image. This will build and tag the image as a newer version in your docker cache. You will need to rebuild the app and worker images to incorporate this new image:
+
+    docker-compose build app worker
+
+You might also need to update the DB and rebuild assets. After this, you should be able to start Canvas as usual.
+
 ### Communicating between projects
 
 It may be hard to link to the Canvas container in some situations using only `localhost`. This can be mitigated using the IP address of your host machine to access the canvas instance or by using virtual hosts if that is not feasible.
@@ -91,3 +103,9 @@ Better instructions on getting this working will be add in the future (sorry!).
 #### LTI services (membership, grades, etc)
 
 For LTI you need to use your machine's IP address (Change the `DOMAIN` environment variable to your IP address).
+
+### Troubleshooting
+
+##### Passenger timeout when trying to access Canvas.
+
+Increase the PASSENGER_STARTUP_TIMEOUT environment variable in docker-compose.yml. First time startup can take a while and the timeout might be too short.
