@@ -109,3 +109,26 @@ For LTI you need to use your machine's IP address (Change the `DOMAIN` environme
 ##### Passenger timeout when trying to access Canvas.
 
 Increase the PASSENGER_STARTUP_TIMEOUT environment variable in docker-compose.yml. First time startup can take a while and the timeout might be too short.
+
+### Update postgres version (from 9.6 to 12.4)
+
+1. `docker-compose down`
+1. open `docker-compose.yml` in an editor
+    - comment out the regular section of `db`
+    - uncomment the `tianon/postgres-upgrade` section of `db`
+1. in file explorer / Finder, open the `.data` folder
+    - back a backup copy of the entire `postgres` folder
+    - rename the `postgres` folder to `postgres-9.6`
+1. `docker-compose up -d`
+1. wait a few minutes for the upgrade to happen
+1. `docker-compose down`
+1. in file explorer / Finder, open the `.data` folder
+    - rename the `postgres-12` folder to `postgres`
+    - edit the `pg_hba.conf` file in `postgres` and add `host all all all md5` to the bottom
+1. open `docker-compose.yml` in an editor
+    - uncomment the regular section of `db`
+    - comment out the `tianon/postgres-upgrade` section of `db`
+1. `docker-compose up -d`
+
+
+After you verify that the update worked, you can remove the backup copy of `postgres` and the `postgres-9.6` folders (or keep them as backups for later)
