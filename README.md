@@ -94,6 +94,39 @@ Note that Instructure recommends at least 8 GB of RAM to build this image. This 
 
 You might also need to update the DB and rebuild assets. After this, you should be able to start Canvas as usual.
 
+#### Canvas Build Issues
+
+##### Issues encountered on stable branch as of 2020-11-10
+
+* Yarn install fails with `There appears to be trouble with your network connection. Retrying...` messages.
+
+  If your network isn't having issues, then it could just be the timeout before retry is too short. I'm not sure if this is due to packages being too large or if there's some sort of throttling in effect when downloading packages. Open the Canvas `Dockerfile` and add the options `--network-timeout 600000 --network-concurrency 1` to `yarn install`. This will increase the timeout to 10 minutes (in milliseconds) and limit the download to only one at a time.
+
+* Yarn install fails with package not found. However, when you check against the yarn registry, you can clearly see it listed.
+
+  Remove the `node_modules` directory entirely and run the build again.
+
+* Migration fails with: `` NoMethodError: undefined method `block_stranded' for #<Switchman::Shard:0x00005582f698fb60> ``
+
+  Looks like db:migrate needs to run differently if you're using Rails 5.2 vs Rails 6. It defaults to the Rails 6 version. Since we're currently using Rails 5.2, we need to set environment variable CANVAS_RAILS5_2 to 1, e.g.: `CANVAS_RAILS5_2=1`
+
+* Migration fails on MakeRoleRootAccountIdNotNull
+
+  Edit `db/migrate/20200910165057_make_role_root_account_id_not_null.rb`:
+
+  ```diff
+  tag :predeploy
+
+  def up
+  - Role.where(:root_account_id => nil).delete_all
+  + Role.where(:root_account_id => nil).update_all(:root_account_id => 0)
+    change_column_null :roles, :root_account_id, false
+  end
+
+  ```
+
+  This was a bug that was fixed by Canvas in a later commit that hasn't made it into stable yet.
+
 ### Communicating between projects
 
 It may be hard to link to the Canvas container in some situations using only `localhost`. This can be mitigated using the IP address of your host machine to access the canvas instance or by using virtual hosts if that is not feasible.
