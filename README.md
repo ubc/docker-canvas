@@ -7,7 +7,7 @@ Docker provisioning for Canvas integration tests (via LTI, etc)
 
 * [Docker Engine](https://docs.docker.com/engine/installation/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
-* Large amount (~4GB) of memory allocated to your docker machine (Canvas uses a lot of memory)
+* Large amount (~13GB for compiling assets; ~4GB for running) of memory allocated to your docker machine (Canvas uses a lot of memory)
 
 ### Clone Repo and Start Server
 
