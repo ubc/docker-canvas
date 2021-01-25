@@ -84,7 +84,11 @@ You can try rebuilding the image if you are experiencing issues importing course
 
 ### Update Canvas
 
-The official Canvas docker image might not be up-to-date with the version available on github. If you need an updated image, you will have to build it yourself. Check out Canvas from Instructure's github (make sure you're on the branch you need, e.g.: stable) and run:
+The official Canvas docker image might not be up-to-date with the version available on github. If you need an updated image, you will have to build it yourself. Check out Canvas from Instructure's github. You will probably have issues building the image from the branches (master, stable, etc), so checkout out one of the release tags, e.g.:
+
+    git checkout tags/release/2020-12-16.47
+
+Then build the docker image with:
 
     docker build -t instructure/canvas-lms:stable .
 
