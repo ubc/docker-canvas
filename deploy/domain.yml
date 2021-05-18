@@ -1,5 +1,5 @@
 default: &default
-  domain: <%= ENV['DOMAIN'] %>:8900
+  domain: <%= ENV['DOMAIN'] %>
 
 development:
   <<: *default

@@ -1,7 +1,7 @@
 default: &default
   encryption_key: facdd3a131ddd8988b14f6e4e01039c93cfa0160
   lti_iss: https://docker-canvas.instructure.com
-  lti_grant_host: <%= ENV['DOMAIN'] %>:8900
+  lti_grant_host: <%= ENV['DOMAIN'] %>
 
 production:
   <<: *default

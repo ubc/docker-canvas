@@ -1,4 +1,4 @@
-version: '2'
+version: '3.8'
 services:
   db:
     image: postgres:12.4
@@ -33,10 +33,9 @@ services:
   mail:
     image: mailhog/mailhog:v1.0.1
     ports:
-      - "8901:8025"
+      - "8900:8025"
   app: &app
-    image: docker-canvas
-    build: .
+    image: instructure/canvas-lms:stable
     command: bash -c "./wait-for-it.sh -t 40 db:5432 && /usr/src/entrypoint"
     environment:
       - DB_DRIVER=postgresql
@@ -54,33 +53,54 @@ services:
       - MAIL_DOMAIN=example.com
       - MAIL_DEFAULT_SENDER_ADDRESS=canvas@example.com
       - MAIL_DEFAULT_SENDER_NAME=Canvas Admin
-      - DOMAIN=localhost
       - PASSENGER_STARTUP_TIMEOUT=300
+      - DOMAIN=docker_canvas_app
     volumes:
-      - ./.data/public/dist/brandable_css:/usr/src/app/public/dist/brandable_css
-      - ./deploy/database.yml:/usr/src/app/config/database.yml:ro
-      - ./deploy/redis.yml:/usr/src/app/config/redis.yml:ro
+      # config
       - ./deploy/cache_store.yml:/usr/src/app/config/cache_store.yml:ro
-      - ./deploy/outgoing_mail.yml:/usr/src/app/config/outgoing_mail.yml:ro
-      - ./deploy/security.yml:/usr/src/app/config/security.yml:ro
+      - ./deploy/cassandra.yml:/usr/src/app/config/cassandra.yml:ro
+      - ./deploy/consul.yml:/usr/src/app/config/consul.yml:ro
+      - ./deploy/database.yml:/usr/src/app/config/database.yml:ro
       - ./deploy/delayed_jobs.yml:/usr/src/app/config/delayed_jobs.yml:ro
       - ./deploy/domain.yml:/usr/src/app/config/domain.yml:ro
-      - ./deploy/consul.yml:/usr/src/app/config/consul.yml:ro
       - ./deploy/dynamic_settings.yml:/usr/src/app/config/dynamic_settings.yml:ro
+      - ./deploy/outgoing_mail.yml:/usr/src/app/config/outgoing_mail.yml:ro
+      - ./deploy/redis.yml:/usr/src/app/config/redis.yml:ro
+      - ./deploy/security.yml:/usr/src/app/config/security.yml:ro
       - ./deploy/selenium.yml:/usr/src/app/config/selenium.yml:ro
       - ./deploy/vault.yml:/usr/src/app/config/vault.yml:ro
+      # override config settings
       - ./deploy/development-local.rb:/usr/src/app/config/environments/development-local.rb:ro
-      - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh:ro
-      - ./override/oauth2_provider_controller.rb:/usr/src/app/app/controllers/oauth2_provider_controller.rb
+      # persistence
+      - ./.data/public/dist/brandable_css:/usr/src/app/public/dist/brandable_css
       - ./.data/tmp:/usr/src/app/tmp
+      # wait for it script
+      - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh:ro
+      # fixes/overrides
+      - ./override/fill_custom_claim_columns_for_resource_link.rb:/usr/src/app/lib/data_fixup/lti/fill_custom_claim_columns_for_resource_link.rb
+      - ./override/fill_lookup_uuid_and_resource_link_uuid_columns.rb:/usr/src/app/lib/data_fixup/lti/fill_lookup_uuid_and_resource_link_uuid_columns.rb
+      - ./override/20210201170030_fill_lookup_uuid_and_resource_link_uuid_columns_at_lti_resource_links.rb:/usr/src/app/db/migrate/20210201170030_fill_lookup_uuid_and_resource_link_uuid_columns_at_lti_resource_links.rb
     ports:
-      - "8900:80"
+      - "80:80"
     depends_on:
       - db
       - redis
       - mail
+    networks:
+      default:
+        aliases:
+          - app
+      docker_canvas_bridge:
+        aliases:
+          - docker_canvas_app
   worker:
     <<: *app
     command: bundle exec script/delayed_job run
     ports:
-      - "8902:80"
+      - "8901:80"
+    networks:
+      - default
+
+networks:
+  docker_canvas_bridge:
+    name: docker_canvas_bridge
