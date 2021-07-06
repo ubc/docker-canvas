@@ -17,16 +17,16 @@ Docker provisioning for Canvas integration tests (via LTI, etc)
 
 ## Generate Canvas Docker Image (with issues encountered on stable branch as of 2021-05-18)
 
-Based on SHA `9ad21650ebbee144bd96a28aab53507a1bcefc6c`
+Based on SHA `9ad21650ebbee144bd96a28aab53507a1bcefc6c`. Still working as of tag `release\2021-06-23.26`.
 
-The official Canvas docker image might not be up-to-date with the version available on github. If you need an updated image, you will have to build it yourself. Check out Canvas from Instructure's github (make sure you're on the branch you need, e.g.: stable). *You will also need to copy the `Dockerfile_with_fixes` file into the Canvas-lms repo* and run:
+The official Canvas docker image might not be up-to-date with the version available on github. If you need an updated image, you will have to build it yourself. Check out Canvas from Instructure's github (make sure you're on the branch you need, e.g.: stable). *You will also need to copy the `Dockerfile.prod.with.fixes` file into the Canvas-lms repo* and run:
 
-    docker build -t instructure/canvas-lms:stable -f Dockerfile_with_fixes .
+    docker build -t instructure/canvas-lms:stable -f Dockerfile.prod.with.fixes .
 
 Note that Instructure recommends at around 10 GB of RAM to build this image. This will build and tag the image as a newer version in your docker cache.
 
 Notes:
-- There is currently no Dockerfile in Canvas that will generate an easily runnable image. `Dockerfile_with_fixes` is a stopgap to getting a working version of Canvas running without dory/dinghy.
+- There is currently no Dockerfile in Canvas that will generate an easily runnable image. `Dockerfile.prod.with.fixes` is a stopgap to getting a working version of Canvas running without dory/dinghy.
 - It is a combination of Canvas repo's `Dockerfile` and `ubuntu.development.Dockerfile` files.
 - `yarn install` needs the `--network-timeout 600000 --network-concurrency 1` options or it will fail.`
 
@@ -57,11 +57,11 @@ Finally startup all the services:
 
 Canvas is accessible at
 
-    http://docker_canvas_app/
+    http://docker_canvas_app:8900/
 
 MailHog (catches all out going mail from canvas) is accessible at
 
-    http://localhost:8900/
+    http://localhost:8902/
 
 # Running
 
@@ -125,7 +125,7 @@ networks:
     name: docker_canvas_bridge
 ```
 
-To include the network in another project you just need to add the network (in additional to the default network) and then you can use the alias `docker_canvas_app` to connect to the canvas app. For example in another project do:
+To include the network in another project you just need to add the network (in additional to the default network) and then you can use the alias `docker_canvas_app:8900` to connect to the canvas app. For example in another project do:
 
 ```
 version: '3.8'

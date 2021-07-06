@@ -33,7 +33,7 @@ services:
   mail:
     image: mailhog/mailhog:v1.0.1
     ports:
-      - "8900:8025"
+      - "8902:8025"
   app: &app
     image: instructure/canvas-lms:stable
     command: bash -c "./wait-for-it.sh -t 40 db:5432 && /usr/src/entrypoint"
@@ -54,7 +54,12 @@ services:
       - MAIL_DEFAULT_SENDER_ADDRESS=canvas@example.com
       - MAIL_DEFAULT_SENDER_NAME=Canvas Admin
       - PASSENGER_STARTUP_TIMEOUT=300
-      - DOMAIN=docker_canvas_app
+      - DOMAIN=docker_canvas_app:8900
+      - APP_DOMAIN=docker_canvas_app
+      # need both ports to be equal or it'll redirect HTTP to HTTPS, and we
+      # haven't setup HTTPS
+      - CG_HTTP_PORT=8900
+      - CG_HTTPS_PORT=8900
     volumes:
       # config
       - ./deploy/cache_store.yml:/usr/src/app/config/cache_store.yml:ro
@@ -81,7 +86,7 @@ services:
       - ./override/fill_lookup_uuid_and_resource_link_uuid_columns.rb:/usr/src/app/lib/data_fixup/lti/fill_lookup_uuid_and_resource_link_uuid_columns.rb
       - ./override/20210201170030_fill_lookup_uuid_and_resource_link_uuid_columns_at_lti_resource_links.rb:/usr/src/app/db/migrate/20210201170030_fill_lookup_uuid_and_resource_link_uuid_columns_at_lti_resource_links.rb
     ports:
-      - "80:80"
+      - "8900:8900"
     depends_on:
       - db
       - redis
