@@ -101,8 +101,7 @@ services:
   worker:
     <<: *app
     command: bundle exec script/delayed_job run
-    ports:
-      - "8901:80"
+    ports: []
     networks:
       - default
 
