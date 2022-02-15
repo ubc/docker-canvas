@@ -11,6 +11,63 @@ Docker provisioning for Canvas integration tests (via LTI, etc)
 
 # Setting Up
 
+---
+---
+## **Note: As of 2022-02-14 and release/2022-02-16.01**
+
+Using Canvas commit [`60fe0e86c40a346b6ff845e86b3156c7fbf5d32a`](https://github.com/instructure/canvas-lms/releases/tag/release%2F2022-02-16.01)
+
+Refer to the [Quick Start](https://github.com/instructure/canvas-lms/wiki/Quick-Start/3b9ade72fd0cb8a98fea2241c8b8f138bb4b8286) instructions.
+
+The `script/docker_dev_setup.sh` automated setup script is currently working
+on Debian 11 with the following notes:
+
+- [dory](https://github.com/FreedomBen/dory/tree/3420fddf14ae7cfa443612c4cc50d11073311649) appears to be mandatory. Install it on the host, not in a container.
+- To reset the state of the build, remember to delete both images and volumes.
+- Apply the following patch:
+
+```diff
+commit a30dd213fee92f452160065f50ade61805d87330 (HEAD)
+Author: William Ono <william.ono@ubc.ca>
+Date:   Mon Feb 14 16:21:39 2022 -0800
+
+    Account for different CLI syntax
+
+diff --git a/script/common/os/linux/impl.sh b/script/common/os/linux/impl.sh
+index 6223f790..fedf0430 100644
+--- a/script/common/os/linux/impl.sh
++++ b/script/common/os/linux/impl.sh
+@@ -3,10 +3,10 @@ source script/common/utils/spinner.sh
+ 
+ function set_service_util {
+   if installed service; then
+-    service_manager='service'
++    docker_status='service docker status'
+     start_docker="sudo service docker start"
+   elif installed systemctl; then
+-    service_manager='systemctl'
++    docker_status='systemctl status docker'
+     start_docker="sudo systemctl start docker"
+   else
+     echo "Unable to find 'service' or 'systemctl' installed."
+@@ -15,7 +15,7 @@ function set_service_util {
+ }
+ 
+ function start_docker_daemon {
+-  eval "$service_manager docker status &> /dev/null" && return 0
++  eval "$docker_status &> /dev/null" && return 0
+   prompt 'The docker daemon is not running. Start it? [y/n]' confirm
+   [[ ${confirm:-n} == 'y' ]] || return 1
+   eval "$start_docker"
+```
+
+This repository will be retained in case the upstream procedure breaks again,
+or a setup without dory is preferred.
+
+---
+---
+
+
 ## Clone Repo
 
     git clone https://github.com/ubc/docker-canvas.git docker-canvas
