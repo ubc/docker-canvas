@@ -9,10 +9,21 @@ Docker provisioning for Canvas integration tests (via LTI, etc)
 * [Docker Compose](https://docs.docker.com/compose/install/)
 * Large amount of memory allocated to your docker machine (Canvas uses a lot of memory). You need ~10GB to build the image and ~6GB to run the image.
 
-# Setting Up
+# Setting Up via Vendor Quick Start
 
----
----
+## As of release/2022-09-14.120
+
+- Mutagen has disappeared, which probably led to the below permission issues
+- On Linux, you're likely to encounter permission errors during setup. You have two options:
+  1. Easiest fix is to comment out the `CANVAS_SKIP_DOCKER_USERMOD='true'` line in `script/docker_dev_setup.sh`. 
+  2. Alternatively, you can follow the instructions in `doc/docker/README.md` before running setup. The `CANVAS_SKIP_DOCKER_USERMOD` option is set to true by default in `script/docker_dev_setup.sh`, so you don't need to set it manually.
+
+## As of release/2022-06-08.121
+
+- Skipping Dory setup now works, see [Skip Dory](#skip-dory) for an alternative setup that still allows the use of the `canvas.docker` domain.
+- Mutagen and mutagen-compose are used for file synchronization between docker and host.
+- Skipping Mutagen results in the build failing later on at `bundle install`
+
 ## **Note: As of 2022-02-14 and release/2022-02-16.01**
 
 Using Canvas commit [`60fe0e86c40a346b6ff845e86b3156c7fbf5d32a`](https://github.com/instructure/canvas-lms/releases/tag/release%2F2022-02-16.01)
@@ -61,12 +72,18 @@ index 6223f790..fedf0430 100644
    eval "$start_docker"
 ```
 
-This repository will be retained in case the upstream procedure breaks again,
-or a setup without dory is preferred.
+## Skip Dory
+
+This is using the same method laid out in [Communicating between projects](#communicating-between-projects). Where we put Canvas on a docker network named `docker_canvas_bridge` with an alias of `canvas.docker`. Containers that need to talk to Canvas directly, e.g.: for LTI 1.3 service calls, can reach Canvas via the `canvas.docker` domain as long as they're added to the `docker_canvas_bridge` network too. An example docker-compose.override.yml file with this implemented is in this repo as `docker-compose.override.skip-dory-example.yml`.
+
+In the example, there's an additional complication, as we're exposing Canvas externally on port 9100 instead of the default port 80. Containers within the same network don't use the external port and needs to talk to the internal port. To maintain consistency, it would be ideal if we can reach Canvas internally on port 9100 too. To this end, the example uses the `socat` utility to internally port forward 9100 to the Canvas web service on port 80. It is to the `socat` service that we attach the `docker_canvas_bridge` network to, since it is the one that'll receive all the requests on port 9100.
 
 ---
 ---
 
+# Old Non-Vendor Method
+
+Retained for reference.
 
 ## Clone Repo
 
